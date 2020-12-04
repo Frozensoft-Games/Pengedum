@@ -11,7 +11,7 @@ public class LoadingGameManager : MonoBehaviour
     public float rotationDegreesAmount = 90f;
     private float totalRotation = 0;
 
-    private float degreesPerSecond = 30f;
+    private float degreesPerSecond = 60f;
 
     // Use this for initialization
     void Start()
@@ -30,10 +30,10 @@ public class LoadingGameManager : MonoBehaviour
 
     void SwingOpen()
     {
-        FsgLogo.gameObject.SetActive(true);
         float currentAngle = FsgLogo.transform.rotation.eulerAngles.y;
         FsgLogo.transform.rotation =
             Quaternion.AngleAxis(currentAngle + (Time.deltaTime * degreesPerSecond), Vector3.up);
         totalRotation += Time.deltaTime * degreesPerSecond;
+        FsgLogo.gameObject.SetActive(true);
     }
 }
