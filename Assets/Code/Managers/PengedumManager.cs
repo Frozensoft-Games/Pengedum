@@ -13,7 +13,7 @@ public class PengedumManager : MonoBehaviour
     // Play the game
     public void Play()
     {
-        Debug.Log("You are currently playing the game, GG!");
+        GameManager.instance.LoadGame();
     }
 
     // Options for the game

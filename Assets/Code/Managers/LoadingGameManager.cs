@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,34 +7,50 @@ using UnityEngine.SceneManagement;
 public class LoadingGameManager : MonoBehaviour
 {
     public GameObject FsgLogo;
+    public GameObject HjelpeLinjenLogo;
 
-    public float rotationDegreesPerSecond = 45f;
-    public float rotationDegreesAmount = 90f;
-    private float totalRotation = 0;
+    public float FsgrotationDegreesPerSecond = 45f;
+    public float FsgrotationDegreesAmount = 90f;
+    private float FsgtotalRotation = 0;
+
+    public float HLrotationDegreesPerSecond = 45f;
+    public float HLrotationDegreesAmount = 90f;
+    private float HLtotalRotation = 0;
 
     private float degreesPerSecond = 60f;
 
-    // Use this for initialization
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         //if we haven't reached the desired rotation, swing
-
-        if (Mathf.Abs(totalRotation) < Mathf.Abs(rotationDegreesAmount))
-            SwingOpen();
+        if (Mathf.Abs(FsgtotalRotation) < Mathf.Abs(FsgrotationDegreesAmount))
+            AnimateFsgLogo();
+        else if (Mathf.Abs(HLtotalRotation) < Mathf.Abs(HLrotationDegreesAmount) && !(Mathf.Abs(FsgtotalRotation) < Mathf.Abs(FsgrotationDegreesAmount)))
+        {
+            FsgLogo.gameObject.SetActive(false);
+            AnimateHjelpeLinjenLogo();
+        }
+        else
+        {
+            HjelpeLinjenLogo.gameObject.SetActive(false);
+            SceneManager.LoadSceneAsync(1);
+        }
     }
 
-    void SwingOpen()
+    void AnimateFsgLogo()
     {
-        float currentAngle = FsgLogo.transform.rotation.eulerAngles.y;
+        var currentAngle = FsgLogo.transform.rotation.eulerAngles.y;
         FsgLogo.transform.rotation =
             Quaternion.AngleAxis(currentAngle + (Time.deltaTime * degreesPerSecond), Vector3.up);
-        totalRotation += Time.deltaTime * degreesPerSecond;
+        FsgtotalRotation += Time.deltaTime * degreesPerSecond;
         FsgLogo.gameObject.SetActive(true);
+    }
+
+    private void AnimateHjelpeLinjenLogo()
+    {
+        var currentAngle = HjelpeLinjenLogo.transform.rotation.eulerAngles.y;
+        HjelpeLinjenLogo.transform.rotation =
+            Quaternion.AngleAxis(currentAngle + (Time.deltaTime * degreesPerSecond), Vector3.up);
+        HLtotalRotation += Time.deltaTime * degreesPerSecond;
+        HjelpeLinjenLogo.gameObject.SetActive(true);
     }
 }
