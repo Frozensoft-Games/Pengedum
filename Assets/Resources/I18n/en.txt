@@ -1,0 +1,7 @@
+play=Play
+options=Options
+quit=Quit
+doorMenuText=Are you sure you want to go back to the Main Menu?
+openPCText=Do you want to use this PC?
+yes=Yes
+no=No

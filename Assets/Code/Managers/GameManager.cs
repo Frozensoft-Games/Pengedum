@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadSceneAsync((int) SceneIndexes.TITLE_SCREEN, LoadSceneMode.Additive);
     }
 
-    List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
+    private readonly List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
     public void LoadGame()
     {
         backgroundImage.sprite = backgrounds[Random.Range(0, backgrounds.Length)];
@@ -41,6 +41,19 @@ public class GameManager : MonoBehaviour
 
         scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.TITLE_SCREEN));
         scenesLoading.Add(SceneManager.LoadSceneAsync((int) SceneIndexes.MAP, LoadSceneMode.Additive));
+
+        StartCoroutine(GetSceneLoadProgress());
+    }
+
+    public void LoadMainMenu()
+    {
+        backgroundImage.sprite = backgrounds[Random.Range(0, backgrounds.Length)];
+        loadingScreen.gameObject.SetActive(true);
+
+        StartCoroutine(GenerateTips());
+
+        scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.MAP));
+        scenesLoading.Add(SceneManager.LoadSceneAsync((int)SceneIndexes.TITLE_SCREEN, LoadSceneMode.Additive));
 
         StartCoroutine(GetSceneLoadProgress());
     }

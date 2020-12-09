@@ -13,9 +13,4 @@ public class TestingRigidbodyCS : MonoBehaviour {
 
 		LeanTween.move( ball1, new Vector3(2f,0f,7f), 1.0f).setDelay(1.0f).setRepeat(-1);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

@@ -18,8 +18,8 @@ TagManager:
   - Player
   - PostProcessing
   - SetDressing
-  - 
-  - 
+  - Can Collide
+  - Ground
   - Vehicles
   - Navmesh
   - Environment

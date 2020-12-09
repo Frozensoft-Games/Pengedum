@@ -35,13 +35,13 @@ public class TestingZLegacy : MonoBehaviour {
 
 	void Start () {
 		ltLogo = GameObject.Find("LeanTweenLogo");
-		LeanTween.delayedCall(1f, cycleThroughExamples);
+		LeanTween.delayedCall(1f, CycleThroughExamples);
 		origin = ltLogo.transform.position;
 
 //		alphaExample();
 	}
 
-	void pauseNow(){
+	void PauseNow(){
 		Time.timeScale = 0f;
 		Debug.Log("pausing");
 	}
@@ -51,11 +51,11 @@ public class TestingZLegacy : MonoBehaviour {
 		GUI.Label(new Rect(0.03f*Screen.width,0.03f*Screen.height,0.5f*Screen.width,0.3f*Screen.height), label);
 	}
 	
-	void endlessCallback(){
+	void EndlessCallback(){
 		Debug.Log("endless");
 	}
 
-	void cycleThroughExamples(){
+	void CycleThroughExamples(){
 		if(exampleIter==0){
 			int iter = (int)timingType + 1;
 			if(iter>(int)TimingType.Length)
@@ -80,33 +80,33 @@ public class TestingZLegacy : MonoBehaviour {
 
 		// Debug.Log("cycleThroughExamples time:"+Time.time + " useEstimatedTime:"+useEstimatedTime);
 		float delayTime = 1.1f;
-		LeanTween.delayedCall( gameObject, delayTime, cycleThroughExamples).setUseEstimatedTime(useEstimatedTime);
+		LeanTween.delayedCall( gameObject, delayTime, CycleThroughExamples).setUseEstimatedTime(useEstimatedTime);
 
 		exampleIter = exampleIter+1>=exampleFunctions.Length ? 0 : exampleIter + 1;
 	}
 
-	public void updateValue3Example(){
+	public void UpdateValue3Example(){
 		Debug.Log("updateValue3Example Time:"+Time.time);
-		LeanTween.value( gameObject, updateValue3ExampleCallback, new Vector3(0.0f, 270.0f, 0.0f), new Vector3(30.0f, 270.0f, 180f), 0.5f ).setEase(LeanTweenType.easeInBounce).setRepeat(2).setLoopPingPong().setOnUpdateVector3(updateValue3ExampleUpdate).setUseEstimatedTime(useEstimatedTime);
+		LeanTween.value( gameObject, UpdateValue3ExampleCallback, new Vector3(0.0f, 270.0f, 0.0f), new Vector3(30.0f, 270.0f, 180f), 0.5f ).setEase(LeanTweenType.easeInBounce).setRepeat(2).setLoopPingPong().setOnUpdateVector3(UpdateValue3ExampleUpdate).setUseEstimatedTime(useEstimatedTime);
 	}
 
-	public void updateValue3ExampleUpdate( Vector3 val){
+	public void UpdateValue3ExampleUpdate( Vector3 val){
 		//Debug.Log("val:"+val+" obj:"+obj);
 	}
 
-	public void updateValue3ExampleCallback( Vector3 val ){
+	public void UpdateValue3ExampleCallback( Vector3 val ){
 		ltLogo.transform.eulerAngles = val;
 		// Debug.Log("updateValue3ExampleCallback:"+val);
 	}
 
-	public void loopTestClamp(){
+	public void LoopTestClamp(){
 		Debug.Log("loopTestClamp Time:"+Time.time);
 		GameObject cube1 = GameObject.Find("Cube1");
 		cube1.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 		LeanTween.scaleZ( cube1, 4.0f, 1.0f).setEase(LeanTweenType.easeOutElastic).setRepeat(7).setLoopClamp().setUseEstimatedTime(useEstimatedTime);//
 	}
 
-	public void loopTestPingPong(){
+	public void LoopTestPingPong(){
 		Debug.Log("loopTestPingPong Time:"+Time.time);
 		GameObject cube2 = GameObject.Find("Cube2");
 		cube2.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
@@ -114,65 +114,64 @@ public class TestingZLegacy : MonoBehaviour {
 		//LeanTween.scaleY( cube2, 4.0f, 1.0f, LeanTween.options().setEaseOutQuad().setRepeat(8).setLoopPingPong().setUseEstimatedTime(useEstimatedTime) );
 	}
 
-	public void colorExample(){
+	public void ColorExample(){
 		GameObject lChar = GameObject.Find("LCharacter");
 		LeanTween.color( lChar, new Color(1.0f,0.0f,0.0f,0.5f), 0.5f ).setEase(LeanTweenType.easeOutBounce).setRepeat(2).setLoopPingPong().setUseEstimatedTime(useEstimatedTime);
 	}
 
-	public void moveOnACurveExample(){
+	public void MoveOnACurveExample(){
 		Debug.Log("moveOnACurveExample Time:"+Time.time);
 
 		Vector3[] path = new Vector3[] { origin,pt1.position,pt2.position,pt3.position,pt3.position,pt4.position,pt5.position,origin};
 		LeanTween.move( ltLogo, path, 1.0f ).setEase(LeanTweenType.easeOutQuad).setOrientToPath(true).setUseEstimatedTime(useEstimatedTime);
 	}
 	
-	public void customTweenExample(){
+	public void CustomTweenExample(){
 		Debug.Log("customTweenExample starting pos:"+ltLogo.transform.position+" origin:"+origin);
 		
 		LeanTween.moveX( ltLogo, -10.0f, 0.5f ).setEase(customAnimationCurve).setUseEstimatedTime(useEstimatedTime);
 		LeanTween.moveX( ltLogo, 0.0f, 0.5f ).setEase(customAnimationCurve).setDelay(0.5f).setUseEstimatedTime(useEstimatedTime);
 	}
 	
-	public void moveExample(){
+	public void MoveExample(){
 		Debug.Log("moveExample");
 		
 		LeanTween.move( ltLogo, new Vector3(-2f,-1f,0f), 0.5f).setUseEstimatedTime(useEstimatedTime);
 		LeanTween.move( ltLogo, origin, 0.5f).setDelay(0.5f).setUseEstimatedTime(useEstimatedTime);
 	}
 	
-	public void rotateExample(){
+	public void RotateExample(){
 		Debug.Log("rotateExample");
 
-		Hashtable returnParam = new Hashtable();
-		returnParam.Add("yo", 5.0);
-		
-		LeanTween.rotate( ltLogo, new Vector3(0f,360f,0f), 1f).setEase(LeanTweenType.easeOutQuad).setOnComplete(rotateFinished).setOnCompleteParam(returnParam).setOnUpdate(rotateOnUpdate).setUseEstimatedTime(useEstimatedTime);
+        Hashtable returnParam = new Hashtable {{"yo", 5.0}};
+
+        LeanTween.rotate( ltLogo, new Vector3(0f,360f,0f), 1f).setEase(LeanTweenType.easeOutQuad).setOnComplete(RotateFinished).setOnCompleteParam(returnParam).setOnUpdate(RotateOnUpdate).setUseEstimatedTime(useEstimatedTime);
 	}
 
-	public void rotateOnUpdate( float val ){
+	public void RotateOnUpdate( float val ){
 		//Debug.Log("rotating val:"+val);
 	}
 
-	public void rotateFinished( object hash ){
+	public void RotateFinished( object hash ){
 		Hashtable h = hash as Hashtable;
 		Debug.Log("rotateFinished hash:"+h["yo"]);
 	}
 	
-	public void scaleExample(){
+	public void ScaleExample(){
 		Debug.Log("scaleExample");
 		
 		Vector3 currentScale = ltLogo.transform.localScale;
 		LeanTween.scale( ltLogo, new Vector3(currentScale.x+0.2f,currentScale.y+0.2f,currentScale.z+0.2f), 1f ).setEase(LeanTweenType.easeOutBounce).setUseEstimatedTime(useEstimatedTime);
 	}
 	
-	public void updateValueExample(){
+	public void UpdateValueExample(){
 		Debug.Log("updateValueExample");
 		Hashtable pass = new Hashtable();
 		pass.Add("message", "hi");
-		LeanTween.value( gameObject, (Action<float, object>)updateValueExampleCallback, ltLogo.transform.eulerAngles.y, 270f, 1f ).setEase(LeanTweenType.easeOutElastic).setOnUpdateParam(pass).setUseEstimatedTime(useEstimatedTime);
+		LeanTween.value( gameObject, (Action<float, object>)UpdateValueExampleCallback, ltLogo.transform.eulerAngles.y, 270f, 1f ).setEase(LeanTweenType.easeOutElastic).setOnUpdateParam(pass).setUseEstimatedTime(useEstimatedTime);
 	}
 	
-	public void updateValueExampleCallback( float val, object hash ){
+	public void UpdateValueExampleCallback( float val, object hash ){
 		// Hashtable h = hash as Hashtable;
 		// Debug.Log("message:"+h["message"]+" val:"+val);
 		Vector3 tmp = ltLogo.transform.eulerAngles;
@@ -180,20 +179,20 @@ public class TestingZLegacy : MonoBehaviour {
 		ltLogo.transform.eulerAngles = tmp;
 	}
 	
-	public void delayedCallExample(){
+	public void DelayedCallExample(){
 		Debug.Log("delayedCallExample");
 		
-		LeanTween.delayedCall(0.5f, delayedCallExampleCallback).setUseEstimatedTime(useEstimatedTime);
+		LeanTween.delayedCall(0.5f, DelayedCallExampleCallback).setUseEstimatedTime(useEstimatedTime);
 	}
 	
-	public void delayedCallExampleCallback(){
+	public void DelayedCallExampleCallback(){
 		Debug.Log("Delayed function was called");
 		Vector3 currentScale = ltLogo.transform.localScale;
 
 		LeanTween.scale( ltLogo, new Vector3(currentScale.x-0.2f,currentScale.y-0.2f,currentScale.z-0.2f), 0.5f ).setEase(LeanTweenType.easeInOutCirc).setUseEstimatedTime(useEstimatedTime);
 	}
 
-	public void alphaExample(){
+	public void AlphaExample(){
 		Debug.Log("alphaExample");
 		
 		GameObject lChar = GameObject.Find ("LCharacter");
@@ -201,7 +200,7 @@ public class TestingZLegacy : MonoBehaviour {
 		LeanTween.alpha( lChar, 1.0f, 0.5f ).setDelay(0.5f).setUseEstimatedTime(useEstimatedTime);
 	}
 
-	public void moveLocalExample(){
+	public void MoveLocalExample(){
 		Debug.Log("moveLocalExample");
 		
 		GameObject lChar = GameObject.Find ("LCharacter");
@@ -210,24 +209,24 @@ public class TestingZLegacy : MonoBehaviour {
 		LeanTween.moveLocal( lChar, origPos, 0.5f ).setDelay(0.5f).setUseEstimatedTime(useEstimatedTime);
 	}
 
-	public void rotateAroundExample(){
+	public void RotateAroundExample(){
 		Debug.Log("rotateAroundExample");
 		
 		GameObject lChar = GameObject.Find ("LCharacter");
 		LeanTween.rotateAround( lChar, Vector3.up, 360.0f, 1.0f ).setUseEstimatedTime(useEstimatedTime);
 	}
 
-	public void loopPause(){
+	public void LoopPause(){
 		GameObject cube1 = GameObject.Find("Cube1");
 		LeanTween.pause(cube1);
 	}
 
-	public void loopResume(){
+	public void LoopResume(){
 		GameObject cube1 = GameObject.Find("Cube1");
 		LeanTween.resume(cube1 );
 	}
 
-	public void punchTest(){
+	public void PunchTest(){
 		LeanTween.moveX( ltLogo, 7.0f, 1.0f ).setEase(LeanTweenType.punch).setUseEstimatedTime(useEstimatedTime);
 	}
 }

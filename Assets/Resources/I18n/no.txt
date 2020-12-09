@@ -1,0 +1,7 @@
+play=Spill
+options=Alternativer
+quit=Avslutt
+doorMenuText=Er du sikker på at du vil gå tilbake til hovedmenyen?
+openPCText=Vil du bruke denne PCen?
+yes=Ja
+no=Nei
