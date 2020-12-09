@@ -38,9 +38,6 @@ namespace Assets.Code.Profile_System
         // UI needed for Edit Profile
         public GameObject editProfileCanvas;
 
-        // Keeps track of current news url
-        public int currentNewsPage = 0;
-
         // When the Profiles Manager loads it sets it's values and it loads the profiles
         public async void Start()
         {
