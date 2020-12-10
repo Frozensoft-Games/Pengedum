@@ -51,4 +51,18 @@ public class SaveManagerEvents : MonoBehaviour
     {
         OnAllProfilesLoaded?.Invoke(profilesData);
     }
+
+    public event Action<GameData, SelectedProfile> OnSaveGame;
+
+    public void SaveGame(GameData gameData, SelectedProfile selectedProfile)
+    {
+        OnSaveGame?.Invoke(gameData, selectedProfile);
+    }
+
+    public event Action<GameData, SelectedProfile> OnLoadGame;
+
+    public void LoadGame(GameData gameData, SelectedProfile selectedProfile)
+    {
+        OnLoadGame?.Invoke(gameData, selectedProfile);
+    }
 }

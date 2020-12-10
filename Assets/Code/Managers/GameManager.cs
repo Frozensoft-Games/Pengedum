@@ -23,36 +23,115 @@ public class GameManager : MonoBehaviour
     public Image backgroundImage;
     /* /End Background Related Stuff */
 
+    // For the first loading screen.
+    private bool loadingScreenFirst = false;
+
+    public GameObject logoCanvas;
+    public GameObject fsgLogo;
+    public GameObject hjelpeLinjenLogo;
+
+    public float fsgrotationDegreesPerSecond = 45f;
+    public float fsgrotationDegreesAmount = 90f;
+    private float fsgtotalRotation = 0;
+
+    public float hLrotationDegreesPerSecond = 45f;
+    public float hLrotationDegreesAmount = 90f;
+    private float hLtotalRotation = 0;
+
+    private float degreesPerSecond = 60f;
+
+    void FixedUpdate()
+    {
+        if (loadingScreenFirst) return;
+        //if we haven't reached the desired rotation, swing
+        if (Mathf.Abs(fsgtotalRotation) < Mathf.Abs(fsgrotationDegreesAmount))
+            AnimateFsgLogo();
+        else if (Mathf.Abs(hLtotalRotation) < Mathf.Abs(hLrotationDegreesAmount) && !(Mathf.Abs(fsgtotalRotation) < Mathf.Abs(fsgrotationDegreesAmount)))
+        {
+            fsgLogo.gameObject.SetActive(false);
+            AnimateHjelpeLinjenLogo();
+        }
+        else
+        {
+            hjelpeLinjenLogo.gameObject.SetActive(false);
+            logoCanvas.gameObject.SetActive(false);
+            loadingScreenFirst = true;
+            LoadMainMenu();
+        }
+    }
+
+    void AnimateFsgLogo()
+    {
+        var currentAngle = fsgLogo.transform.rotation.eulerAngles.y;
+        fsgLogo.transform.rotation =
+            Quaternion.AngleAxis(currentAngle + (Time.deltaTime * degreesPerSecond), Vector3.up);
+        fsgtotalRotation += Time.deltaTime * degreesPerSecond;
+        fsgLogo.gameObject.SetActive(true);
+    }
+
+    private void AnimateHjelpeLinjenLogo()
+    {
+        var currentAngle = hjelpeLinjenLogo.transform.rotation.eulerAngles.y;
+        hjelpeLinjenLogo.transform.rotation =
+            Quaternion.AngleAxis(currentAngle + (Time.deltaTime * degreesPerSecond), Vector3.up);
+        hLtotalRotation += Time.deltaTime * degreesPerSecond;
+        hjelpeLinjenLogo.gameObject.SetActive(true);
+    }
+
 
     private void Awake()
     {
         instance = this;
 
-        SceneManager.LoadSceneAsync((int) SceneIndexes.TITLE_SCREEN, LoadSceneMode.Additive);
+        if(loadingScreenFirst)
+            SceneManager.LoadSceneAsync((int) SceneIndexes.TITLE_SCREEN, LoadSceneMode.Additive);
     }
 
     private readonly List<AsyncOperation> scenesLoading = new List<AsyncOperation>();
     public void LoadGame()
     {
+        if (SceneManager.GetSceneByBuildIndex((int)SceneIndexes.MAP).isLoaded) return;
         backgroundImage.sprite = backgrounds[Random.Range(0, backgrounds.Length)];
         loadingScreen.gameObject.SetActive(true);
 
         StartCoroutine(GenerateTips());
 
-        scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.TITLE_SCREEN));
+        scenesLoading.Add(SceneManager.UnloadSceneAsync((int) SceneIndexes.PROFILES));
         scenesLoading.Add(SceneManager.LoadSceneAsync((int) SceneIndexes.MAP, LoadSceneMode.Additive));
 
         StartCoroutine(GetSceneLoadProgress());
     }
-
-    public void LoadMainMenu()
+    public void LoadProfiles()
     {
+        if (SceneManager.GetSceneByBuildIndex((int)SceneIndexes.PROFILES).isLoaded) return;
+
         backgroundImage.sprite = backgrounds[Random.Range(0, backgrounds.Length)];
         loadingScreen.gameObject.SetActive(true);
 
         StartCoroutine(GenerateTips());
 
-        scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.MAP));
+        if (SceneManager.GetSceneByBuildIndex((int)SceneIndexes.TITLE_SCREEN).isLoaded)
+            scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.TITLE_SCREEN));
+
+        scenesLoading.Add(SceneManager.LoadSceneAsync((int)SceneIndexes.PROFILES, LoadSceneMode.Additive));
+
+        StartCoroutine(GetSceneLoadProgress());
+    }
+    public void LoadMainMenu()
+    {
+        if (SceneManager.GetSceneByBuildIndex((int)SceneIndexes.TITLE_SCREEN).isLoaded) return;
+
+        backgroundImage.sprite = backgrounds[Random.Range(0, backgrounds.Length)];
+        loadingScreen.gameObject.SetActive(true);
+
+        StartCoroutine(GenerateTips());
+
+        if (SceneManager.GetSceneByBuildIndex((int)SceneIndexes.MAP).isLoaded)
+            scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.MAP));
+
+        if(SceneManager.GetSceneByBuildIndex((int)SceneIndexes.PROFILES).isLoaded)
+            scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.PROFILES));
+
         scenesLoading.Add(SceneManager.LoadSceneAsync((int)SceneIndexes.TITLE_SCREEN, LoadSceneMode.Additive));
 
         StartCoroutine(GetSceneLoadProgress());

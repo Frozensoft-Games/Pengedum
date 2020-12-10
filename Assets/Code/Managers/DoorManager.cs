@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DoorManager : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class DoorManager : MonoBehaviour
         doorUI.SetActive(false);
     }
 
-    void OnTriggerEnter([CanBeNull] Collider col)
+    void OnTriggerEnter(Collider col)
     {
         if (!col.tag.Equals("player", StringComparison.OrdinalIgnoreCase)) return;
         doorUI.SetActive(true);

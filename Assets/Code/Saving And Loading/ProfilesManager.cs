@@ -1,18 +1,14 @@
-﻿using System;
+﻿using Assets.Code.Extensions;
+using Assets.Code.Saving___Loading.Profile_System.SelectProfile;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Networking;
-using System.Collections.Generic;
-using System.Collections;
-using Assets.Code.Saving___Loading.Profile_System.SelectProfile;
 using System.Threading.Tasks;
-using System.Net.Http;
-using System.Text;
-using Assets.Code.Extensions;
 using UnityEditor;
-using UnityEngine.Serialization;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Assets.Code.Profile_System
 {
@@ -20,8 +16,6 @@ namespace Assets.Code.Profile_System
     {
         // This is the value used to store the Main directory path
         private string mainDirectoryPath = "";
-
-        private string profilesImages = "";
 
         // This is the value used to store the profiles.dat location
         private string profilesPath = "";
@@ -50,18 +44,13 @@ namespace Assets.Code.Profile_System
             SaveManagerEvents.current.OnProfileLoaded += OnProfileLoaded;
 
             //Sets the main path value for Profiles
-            mainDirectoryPath = Application.dataPath + "Resources/Profiles/";
+            mainDirectoryPath = Path.Combine(Application.persistentDataPath, "Profiles");
 
             //Sets the profiles.dat path value
             profilesPath = mainDirectoryPath + "/profiles.dat";
 
-            // Sets the path for ProfileImages Folder
-            profilesImages = Application.dataPath + "Resources/ProfileImages/";
-
             // Checks if the Profiles Folder Exists or not. If it doesn't exist it creates it.
             if (!Directory.Exists(mainDirectoryPath)) FileManagerExtension.CreateDirectory(mainDirectoryPath);
-
-            if (!Directory.Exists(profilesImages)) FileManagerExtension.CreateDirectory(profilesImages);
 
             // Loads the event
             FileSystemEventsManager.FileSystemEvents(mainDirectoryPath);
@@ -88,54 +77,81 @@ namespace Assets.Code.Profile_System
         private async Task LoadProfile(string profilePath)
         {
             string profileConfigPath = profilePath + "/config.dat";
-            string profileName = profilePath.Split('/').Last();
+
+            string loadProfileName = profilePath.Split('\\').Last();
+
 
             // Deletes Directory if config file doesn't exist
             if (!Directory.Exists(profilePath) || !File.Exists(profileConfigPath))
             {
-                Debug.Log("Failed to load " + profileName + " could not locate needed information");
+                Debug.Log("Failed to load " + loadProfileName + " could not locate needed information");
             }
-            else if (!SaveManager.Profiles.Exists(p => p.profileId.ToString().Equals(profileName.Split(' ').Last())))
+            else if (!SaveManager.profiles.Exists(p => p.profileId.ToString().Equals(loadProfileName.Split(' ').Last())))
             {
-                Debug.Log(profileName + " not found in profiles.dat file profile will not be loaded");
+                Debug.Log(loadProfileName + " not found in profiles.dat file profile will not be loaded");
             }
             else
             {
                 // Loads the profile and it's content
-                ProfileData profile = await SaveManager.LoadProfileAsync(profileConfigPath, profileName, profileName.Split(' ').Last());
+                ProfileData profile = await SaveManager.LoadProfileAsync(profileConfigPath, loadProfileName, loadProfileName.Split(' ').Last());
 
                 if (profile != null)
                 {
+                    string profileImagePath = Path.Combine(profilePath, "ProfilePicture.png");
+
                     // Creates the stuff needed for the Profiles UI
-                    GameObject ProfilesUIClone = Instantiate(profilesUi) as GameObject;
-                    ProfilesUIClone.transform.SetParent(GameObject.Find("Profiles").transform.Find("Viewport").Find("Content").transform, false);
-                    ProfilesUIClone.AddComponent<SelectProfileData>();
-                    ProfilesUIClone.GetComponent<SelectProfileData>().profileName = profile.profileName;
-                    ProfilesUIClone.GetComponent<SelectProfileData>().profileId = profile.profileId;
-                    ProfilesUIClone.GetComponent<SelectProfileData>().fullProfileName = profile.fullProfileName;
-                    ProfilesUIClone.transform.Find("ProfileInformation").transform.Find("ProfileName").GetComponentInChildren<Text>().text = profile.profileName;
+                    GameObject profilesUiClone = Instantiate(profilesUi) as GameObject;
+                    profilesUiClone.transform.SetParent(GameObject.Find("Profiles").transform.Find("Viewport").Find("Content").transform, false);
+                    profilesUiClone.AddComponent<SelectProfileData>();
+                    profilesUiClone.GetComponent<SelectProfileData>().profileName = profile.profileName;
+                    profilesUiClone.GetComponent<SelectProfileData>().profileId = profile.profileId;
+                    profilesUiClone.GetComponent<SelectProfileData>().profileImage = profile.profileImage;
+                    profilesUiClone.GetComponent<SelectProfileData>().fullProfileName = profile.fullProfileName;
+                    profilesUiClone.transform.Find("ProfileInformation").transform.Find("ProfileName").GetComponentInChildren<Text>().text = profile.profileName;
 
-                    if(ProfilesUIClone.transform.Find("ProfileImages").transform.Find(profile.profileImage) != null)
+                    if(profilesUiClone.transform.Find("ProfileImages").transform.Find(profile.profileImage) != null)
                     {
-                        ProfilesUIClone.transform.Find("ProfileImages").transform.Find(profile.profileImage).gameObject.SetActive(true);
+                        profilesUiClone.transform.Find("ProfileImages").transform.Find(profile.profileImage).gameObject.SetActive(true);
                     }
-
-                    ProfilesUIClone.name = profile.fullProfileName;
-                    ProfilesUIClone.tag = "ProfileUI(Clone)";
-                    if (SaveManager.Profiles.Where(p => p.profileName.Equals(profile.profileName)).ToList().Count > 1)
+                    else if(File.Exists(profileImagePath))
                     {
-                        ProfilesUIClone.transform.Find("ProfileInformation").gameObject.transform.Find("ProfileName").gameObject.SetActive(false);
-                        ProfilesUIClone.transform.Find("ProfileInformation").transform.Find("FullProfileName").gameObject.SetActive(true);
+                        GameObject profileImage = profilesUiClone.transform.Find("ProfileImages").transform.Find("ProfileImage").gameObject;
+                        Texture2D tempPic = await AsyncHelperExtensions.LoadTexture2DAsync(profileImagePath);
+                        profileImage.GetComponent<RawImage>().texture = tempPic;
+                        profileImage.transform.SetParent(profilesUiClone.transform.Find("ProfileImages").transform, false);
                     }
-                    if (profile.profileName.Equals("eiromplays", StringComparison.OrdinalIgnoreCase))
+                    else
                     {
-                        if(ColorUtility.TryParseHtmlString("#bf9b30", out Color color))
+                        Sprite defaultProfilePicture = Resources.Load<Sprite>("Sprites/DefaultProfilePicture");
+                        if (defaultProfilePicture == null)
                         {
-                            ProfilesUIClone.transform.Find("ProfileInformation").GetComponent<Image>().color = color;
-                            ProfilesUIClone.transform.Find("ProfileImages").GetComponent<Image>().color = color;
+                            Debug.Log("Failed to load any profile pictures.");
+                            return;
+                        }
+                        GameObject profileImage = profilesUiClone.transform.Find("ProfileImages").transform
+                            .Find("ProfileImage").gameObject;
+                        profileImage.GetComponent<RawImage>().texture = defaultProfilePicture.texture;
+                        profileImage.transform.SetParent(profilesUiClone.transform.Find("ProfileImages").transform,
+                            false);
+                    }
+
+                    profilesUiClone.name = profile.fullProfileName;
+                    profilesUiClone.tag = "ProfileUI(Clone)";
+                    if (SaveManager.profiles.Where(p => p.profileName.Equals(profile.profileName)).ToList().Count > 1)
+                    {
+                        profilesUiClone.transform.Find("ProfileInformation").gameObject.transform.Find("ProfileName").gameObject.SetActive(false);
+                        profilesUiClone.transform.Find("ProfileInformation").transform.Find("FullProfileName").gameObject.SetActive(true);
+                    }
+                    if (profile.profileName.Equals("eirik", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if(ColorUtility.TryParseHtmlString("#EFB366", out Color backgroundColor) && ColorUtility.TryParseHtmlString("#23404B", out Color textColor))
+                        {
+                            profilesUiClone.transform.Find("ProfileInformation").GetComponent<Image>().color = backgroundColor;
+                            profilesUiClone.transform.Find("ProfileImages").GetComponent<Image>().color = backgroundColor;
+                            profilesUiClone.transform.Find("ProfileInformation").Find("ProfileName").GetComponent<Text>().color = textColor;
                         }
                     }
-                    ProfilesUIClone.SetActive(true);
+                    profilesUiClone.SetActive(true);
                 }
             }
         }
@@ -234,6 +250,30 @@ namespace Assets.Code.Profile_System
             profileName = GameObject.Find("ProfileNameInput").GetComponent<InputField>();
         }
 
+        // Play the game
+        public void ContinueGame()
+        {
+            if (SelectedProfileManager.selectedProfile == null)
+            {
+                Debug.Log("You need to select a profile.");
+                return;
+            }
+
+            if (GameManager.instance == null)
+                SceneManager.LoadSceneAsync((int)SceneIndexes.MANAGER, LoadSceneMode.Additive);
+
+            GameManager.instance?.LoadGame();
+        }
+
+        // Shows the Create Profile Canvas
+        public void BackToMenu()
+        {
+            if (GameManager.instance == null)
+                SceneManager.LoadSceneAsync((int)SceneIndexes.MANAGER, LoadSceneMode.Additive);
+
+            GameManager.instance?.LoadMainMenu();
+        }
+
         // Shows the Create Profile Canvas
         public void FirstTimePlaying()
         {
@@ -258,7 +298,7 @@ namespace Assets.Code.Profile_System
         public async void CreateProfile()
         {
             // Creates the unique profile ID
-            string profileId = $"{GUID.Generate()}{GUID.Generate()}{GUID.Generate()}";
+            string profileId = $"{Guid.NewGuid()}{Guid.NewGuid()}{Guid.NewGuid()}";
 
             if (string.IsNullOrEmpty(profileName.text))
             {
@@ -267,19 +307,18 @@ namespace Assets.Code.Profile_System
             }
 
             // Checks if the Profile already exists or not.
-            while (Directory.Exists(mainDirectoryPath + profileName.text + " " + profileId) || Directory.Exists($"{mainDirectoryPath}{profileName.text}"))
-            {
-                profileId = $"{profileId}{GUID.Generate()}";
-            }
+            while (Directory.Exists($"{mainDirectoryPath}{profileName.text} {profileId}") || Directory.Exists($"{mainDirectoryPath}{profileName.text}"))
+                profileId = $"{profileId}{Guid.NewGuid()}";
 
             string fullProfileName = $"{profileName.text} {profileId}";
 
             // Sets the paths needed for the profile
-            string profileSavePath = mainDirectoryPath + fullProfileName + "/Save/";
-            string profileSaveFilePath = Path.Combine(profileSavePath + "data.dat");
-            string profileConfigPath = mainDirectoryPath + fullProfileName + "/config.dat";
-            string profileSettingsPath = mainDirectoryPath + fullProfileName + "/Settings.dat";
+            string profilePath = Path.Combine(mainDirectoryPath, fullProfileName);
 
+            string profileSavePath = Path.Combine(profilePath, "Save");
+            string profileSaveFilePath = Path.Combine(profileSavePath, "data.dat");
+            string profileConfigPath = Path.Combine(profilePath, "config.dat");
+            string profileSettingsPath = Path.Combine(profilePath, "Settings.dat");
 
             if (!Directory.Exists(mainDirectoryPath)) FileManagerExtension.CreateDirectory(mainDirectoryPath);
 
@@ -291,14 +330,8 @@ namespace Assets.Code.Profile_System
 
             SaveManagerEvents.current.CreateProfile(profileName.text, fullProfileName, profileId);
 
-            if (SelectedProfileManager.selectedProfile == null)
-            {
-                Debug.Log("Failed to create profile reason unknown");
-                return;
-            }
-
             // Creates and saves the profile.
-            await SaveManager.SaveProfileAsync(profileConfigPath, SelectedProfileManager.selectedProfile.profileImage, profileName.text, profileId, fullProfileName);
+            await SaveManager.SaveProfileAsync(profileConfigPath, "DefaultProfilePicture.png", profileName.text, profileId, fullProfileName);
         }
 
         // This function is used to Edit an already existing profile
@@ -321,21 +354,23 @@ namespace Assets.Code.Profile_System
             string fullProfileName = $"{this.profileName.text} {profileId}";
 
             // Checks if the Profile Name is the same
-            if (fullProfileName.Equals(SelectedProfileManager.selectedProfile.fullProfileName))
+            if (fullProfileName.Equals(SelectedProfileManager.selectedProfile.fullProfileName, StringComparison.OrdinalIgnoreCase))
             {
                 Debug.Log("You didn't change the profile name");
-                profileName = SelectedProfileManager.selectedProfile.profileName;
+                return;
             }
             else
             {
-                FileManagerExtension.MoveDirectory(mainDirectoryPath + SelectedProfileManager.selectedProfile.fullProfileName, mainDirectoryPath + fullProfileName);
+                FileManagerExtension.MoveDirectory(Path.Combine(mainDirectoryPath, SelectedProfileManager.selectedProfile.fullProfileName), Path.Combine(mainDirectoryPath, fullProfileName));
             }
 
             // Sets the paths needed for the profile
-            string profileSavePath = mainDirectoryPath + fullProfileName + "/Save/";
-            string profileSaveFilePath = Path.Combine(profileSavePath + "data.dat");
-            string profileConfigPath = mainDirectoryPath + fullProfileName + "/config.dat";
-            string profileSettingsPath = mainDirectoryPath + fullProfileName + "/Settings.dat";
+            string profilePath = Path.Combine(mainDirectoryPath, fullProfileName);
+
+            string profileSavePath = Path.Combine(profilePath, "Save");
+            string profileSaveFilePath = Path.Combine(profileSavePath, "data.dat");
+            string profileConfigPath = Path.Combine(profilePath, "config.dat");
+            string profileSettingsPath = Path.Combine(profilePath, "Settings.dat");
 
 
             if (!Directory.Exists(mainDirectoryPath)) FileManagerExtension.CreateDirectory(mainDirectoryPath);
@@ -348,7 +383,7 @@ namespace Assets.Code.Profile_System
 
 
             // Deletes the old Profiles value from profiles.dat
-            SaveManager.Profiles.Remove(SaveManager.Profiles.FirstOrDefault(p => p.fullProfileName.Equals(SelectedProfileManager.selectedProfile.fullProfileName)));
+            SaveManager.profiles.Remove(SaveManager.profiles.FirstOrDefault(p => p.fullProfileName.Equals(SelectedProfileManager.selectedProfile.fullProfileName)));
             await SaveManager.SaveAllProfilesAsync(profilesPath);
 
             if (SelectedProfileManager.selectedProfile == null)
@@ -376,8 +411,8 @@ namespace Assets.Code.Profile_System
                 return;
             }
 
-            FileManagerExtension.DeleteDirectory(mainDirectoryPath + SelectedProfileManager.selectedProfile.fullProfileName);
-            SaveManager.Profiles.Remove(SaveManager.Profiles.FirstOrDefault(p => p.fullProfileName.Equals(SelectedProfileManager.selectedProfile.fullProfileName)));
+            FileManagerExtension.DeleteDirectory(Path.Combine(mainDirectoryPath, SelectedProfileManager.selectedProfile.fullProfileName));
+            SaveManager.profiles.Remove(SaveManager.profiles.FirstOrDefault(p => p.fullProfileName.Equals(SelectedProfileManager.selectedProfile.fullProfileName)));
             await SaveManager.SaveAllProfilesAsync(profilesPath);
 
             SaveManagerEvents.current.ProfileDeleted(SelectedProfileManager.selectedProfile);

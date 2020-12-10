@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using Assets.Code.Extensions;
+using Assets.Code.Saving___Loading.Profile_System.SelectProfile;
 using UnityEngine;
 
 public class ScreenshotHandler : MonoBehaviour
@@ -15,8 +18,10 @@ public class ScreenshotHandler : MonoBehaviour
         myCamera = gameObject.GetComponent<Camera>();
     }
 
-    private void OnPostRender()
+    private async void OnPostRender()
     {
+        if (SelectedProfileManager.selectedProfile == null) return;
+
         if (!takeScreenshotOnNextFrame) return;
         takeScreenshotOnNextFrame = false;
         RenderTexture renderTexture = myCamera.targetTexture;
@@ -26,8 +31,9 @@ public class ScreenshotHandler : MonoBehaviour
         renderResult.ReadPixels(rect,0,0);
 
         byte[] byteArray = renderResult.EncodeToPNG();
-        System.IO.File.WriteAllBytes(Application.dataPath + "/CameraScreenshot.png", byteArray);
-        Debug.Log("Saved CameraScreenshot.png");
+        string path = Path.Combine(Application.persistentDataPath, "Profiles", SelectedProfileManager.selectedProfile.fullProfileName, "ProfilePicture.png");
+        await AsyncHelperExtensions.WriteBytesAsync(path, byteArray);
+        Debug.Log("Saved Profile Picture.");
 
         RenderTexture.ReleaseTemporary(renderTexture);
         myCamera.targetTexture = null;

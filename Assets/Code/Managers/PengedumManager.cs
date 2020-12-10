@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PengedumManager : MonoBehaviour
 {
@@ -13,12 +14,12 @@ public class PengedumManager : MonoBehaviour
     // Play the game
     public void Play()
     {
-        GameManager.instance.LoadGame();
+        GameManager.instance.LoadProfiles();
     }
 
     // Options for the game
     public void Options()
     {
-        Debug.Log("You are currently editing the settings. GG!");
+        Debug.Log("Coming Soon!");
     }
 }
