@@ -18,3 +18,6 @@ name=Navn
 resume=Fortsett
 menu=Meny
 autoSave=Automatisk lagring!
+fullscreen=Fullskjerm
+graphics=Grafikk
+resolution=Oppløsning

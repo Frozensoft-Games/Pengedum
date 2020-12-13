@@ -16,10 +16,4 @@ public class PengedumManager : MonoBehaviour
     {
         GameManager.instance.LoadProfiles();
     }
-
-    // Options for the game
-    public void Options()
-    {
-        Debug.Log("Coming Soon!");
-    }
 }

@@ -309,6 +309,68 @@ public class SaveManager : MonoBehaviour
         return gameData;
     }
 
+    // Save Options/Settings
+    public static async Task SaveOptionsAsync(GameSettings gameSettings)
+    {
+        if (SelectedProfileManager.selectedProfile == null) return;
+
+        string fullProfileName = SelectedProfileManager.selectedProfile.fullProfileName;
+
+        if (gameSettings == null) return;
+
+        string path = Path.Combine(MainDirectoryPath, fullProfileName, "Settings.dat");
+
+        string json = JsonUtility.ToJson(gameSettings);
+
+        // Creates the unique Encryption key per profile
+        string jsonEncryptedKey = "AhExy6ntHa>zkh+r@M;b^jM|=D=~!S{c";
+        // If the value is longer then 32 characters it will make it 32 characters
+        if (jsonEncryptedKey.Length > 32) jsonEncryptedKey = jsonEncryptedKey.Truncate(32);
+
+        // Encryption process
+        Rijndael crypto = new Rijndael();
+        byte[] soup = crypto.Encrypt(json, jsonEncryptedKey);
+        await AsyncHelperExtensions.WriteBytesAsync(path, soup);
+
+        SaveManagerEvents.current.SaveOptions(gameSettings, SelectedProfileManager.selectedProfile);
+    }
+
+    // Load Options/Settings
+    public static async Task<GameSettings> LoadOptionsAsync()
+    {
+        if (SelectedProfileManager.selectedProfile == null) return null;
+
+        string fullProfileName = SelectedProfileManager.selectedProfile.fullProfileName;
+
+        string path = Path.Combine(MainDirectoryPath, fullProfileName, "Settings.dat");
+
+        if (!File.Exists(path)) return null;
+
+        // This is the encrypted input from the file
+        byte[] soupBackIn = await AsyncHelperExtensions.ReadBytesAsync(path);
+
+        // Creates the unique Encryption key per profile
+        string jsonEncryptedKey = "AhExy6ntHa>zkh+r@M;b^jM|=D=~!S{c";
+        // If the value is longer then 32 characters it will make it 32 characters
+        if (jsonEncryptedKey.Length > 32) jsonEncryptedKey = jsonEncryptedKey.Truncate(32);
+
+        // Decrypting process
+        Rijndael crypto = new Rijndael();
+        string jsonFromFile = crypto.Decrypt(soupBackIn, jsonEncryptedKey);
+
+        // Creates a ProfileData object with the information from the json file
+        GameSettings gameSettings = JsonUtility.FromJson<GameSettings>(jsonFromFile);
+
+        // Checks if the decrypted Game Settings is null or not
+        if (gameSettings != null)
+        {
+            SaveManagerEvents.current.LoadOptions(gameSettings, SelectedProfileManager.selectedProfile);
+            return gameSettings;
+        }
+        Debug.Log("Failed to load game Settings.");
+        return null;
+    }
+
     // Used to easily create a new ProfileData object
     public static ProfileData CreateProfile(string profileId, string profileImage, string profileName, string fullProfileName, bool isTutorialComplete)
     {

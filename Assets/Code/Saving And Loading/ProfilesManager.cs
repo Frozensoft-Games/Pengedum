@@ -80,7 +80,6 @@ namespace Assets.Code.Profile_System
 
             string loadProfileName = profilePath.Split('\\').Last();
 
-
             // Deletes Directory if config file doesn't exist
             if (!Directory.Exists(profilePath) || !File.Exists(profileConfigPath))
             {
@@ -98,7 +97,6 @@ namespace Assets.Code.Profile_System
                 if (profile != null)
                 {
                     string profileImagePath = Path.Combine(profilePath, "ProfilePicture.png");
-
                     // Creates the stuff needed for the Profiles UI
                     GameObject profilesUiClone = Instantiate(profilesUi) as GameObject;
                     profilesUiClone.transform.SetParent(GameObject.Find("Profiles").transform.Find("Viewport").Find("Content").transform, false);
@@ -108,8 +106,9 @@ namespace Assets.Code.Profile_System
                     profilesUiClone.GetComponent<SelectProfileData>().profileImage = profile.profileImage;
                     profilesUiClone.GetComponent<SelectProfileData>().fullProfileName = profile.fullProfileName;
                     profilesUiClone.transform.Find("ProfileInformation").transform.Find("ProfileName").GetComponentInChildren<Text>().text = profile.profileName;
+                    profilesUiClone.transform.Find("ProfileInformation").transform.Find("FullProfileName").GetComponentInChildren<Text>().text = profile.fullProfileName;
 
-                    if(profilesUiClone.transform.Find("ProfileImages").transform.Find(profile.profileImage) != null)
+                    if (profilesUiClone.transform.Find("ProfileImages").transform.Find(profile.profileImage) != null)
                     {
                         profilesUiClone.transform.Find("ProfileImages").transform.Find(profile.profileImage).gameObject.SetActive(true);
                     }
@@ -149,6 +148,7 @@ namespace Assets.Code.Profile_System
                             profilesUiClone.transform.Find("ProfileInformation").GetComponent<Image>().color = backgroundColor;
                             profilesUiClone.transform.Find("ProfileImages").GetComponent<Image>().color = backgroundColor;
                             profilesUiClone.transform.Find("ProfileInformation").Find("ProfileName").GetComponent<Text>().color = textColor;
+                            profilesUiClone.transform.Find("ProfileInformation").Find("FullProfileName").GetComponent<Text>().color = textColor;
                         }
                     }
                     profilesUiClone.SetActive(true);
@@ -298,7 +298,7 @@ namespace Assets.Code.Profile_System
         public async void CreateProfile()
         {
             // Creates the unique profile ID
-            string profileId = $"{Guid.NewGuid()}{Guid.NewGuid()}{Guid.NewGuid()}";
+            string profileId = $"{Guid.NewGuid()}";
 
             if (string.IsNullOrEmpty(profileName.text))
             {
