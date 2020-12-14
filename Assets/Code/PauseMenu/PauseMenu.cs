@@ -5,7 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
-    public static bool gameIsPaused = false;
+    public static bool gameIsPaused;
+    public static bool optionsOpen;
 
     public GameObject pauseMenuUi;
 
@@ -15,8 +16,10 @@ public class PauseMenu : MonoBehaviour
     void Update()
     {
         if (!Input.GetKeyDown(KeyCode.Escape)) return;
-        if (gameIsPaused)
+        if (gameIsPaused && !optionsOpen)
             Resume();
+        else if(gameIsPaused && optionsOpen)
+            OptionsBack();
         else 
             Pause();
     }
@@ -26,7 +29,9 @@ public class PauseMenu : MonoBehaviour
         pauseMenuUi.SetActive(false);
         Time.timeScale = 1f;
         gameIsPaused = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        Debug.Log(DoorManager.isOpen + " " + OpenPCManager.isOpen);
+        if(!DoorManager.isOpen && !OpenPCManager.isOpen)
+            Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Pause()
@@ -57,6 +62,7 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenuUi.SetActive(false);
         optionsMenu.SetActive(true);
+        optionsOpen = true;
     }
 
     // Options Back
@@ -64,5 +70,6 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenuUi.SetActive(true);
         optionsMenu.SetActive(false);
+        optionsOpen = false;
     }
 }

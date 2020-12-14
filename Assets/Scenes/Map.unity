@@ -4011,7 +4011,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28381bcaecb324c49a1793e38570fae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pcUI: {fileID: 1950536199}
+  pcUi: {fileID: 1950536199}
   screenLight: {fileID: 2066672768}
 --- !u!1001 &794606469
 PrefabInstance:
@@ -6639,7 +6639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28381bcaecb324c49a1793e38570fae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pcUI: {fileID: 1950536199}
+  pcUi: {fileID: 1950536199}
   screenLight: {fileID: 2066672768}
 --- !u!54 &1181519620
 Rigidbody:

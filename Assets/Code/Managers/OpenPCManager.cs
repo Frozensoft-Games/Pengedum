@@ -5,21 +5,21 @@ using UnityEngine;
 
 public class OpenPCManager : MonoBehaviour
 {
-    public GameObject pcUI;
+    public GameObject pcUi;
     public GameObject screenLight;
 
     public static bool isOpen = false;
 
     void Start()
     {
-        pcUI.SetActive(false);
+        pcUi.SetActive(false);
         screenLight.SetActive(false);
     }
 
     void OnTriggerEnter(Collider col)
     {
         if (!col.tag.Equals("player", StringComparison.OrdinalIgnoreCase)) return;
-        pcUI.SetActive(true);
+        pcUi.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         isOpen = true;
     }
@@ -32,14 +32,14 @@ public class OpenPCManager : MonoBehaviour
 
     public void Yes()
     {
-        pcUI.SetActive(false);
+        pcUi.SetActive(false);
         screenLight.SetActive(true);
         ScreenshotHandler.TakeScreenshot_Static(1920,1080);
     }
 
     public void No()
     {
-        pcUI.SetActive(false);
+        pcUi.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         isOpen = false;
     }

@@ -25,7 +25,7 @@ public class OptionsManager : MonoBehaviour
 
     public AudioMixer audioMixer;
 
-    void OnEnable()
+    void Start()
     {
         SaveManagerEvents.current.OnLoadOptions += OnLoadOptions;
         SaveManagerEvents.current.OnSaveOptions += OnSaveOptions;
