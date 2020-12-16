@@ -5,18 +5,11 @@ using UnityEngine;
 
 public class OpenPCManager : MonoBehaviour
 {
-    public static OpenPCManager instance;
-
     public GameObject pcUi;
     public GameObject screenLight;
     public GameObject pcMenu;
 
-    public static bool isOpen = false;
-
-    void Awake()
-    {
-        instance = this;
-    }
+    public static bool isOpen;
 
     void Start()
     {
@@ -47,10 +40,18 @@ public class OpenPCManager : MonoBehaviour
 
     public void No()
     {
+        if(pcMenu.gameObject.activeInHierarchy)
+            Debug.Log("Good choice.");
+
         pcUi.SetActive(false);
         screenLight.SetActive(false);
         pcMenu.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         isOpen = false;
+    }
+
+    public void PlayOnPc()
+    {
+        InGameManager.instance.PlayAnimation();
     }
 }

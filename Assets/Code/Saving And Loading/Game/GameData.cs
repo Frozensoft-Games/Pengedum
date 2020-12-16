@@ -18,7 +18,4 @@ public class GameData
     public Vector3 cameraPosition;
     // Camera Rotation
     public Quaternion cameraRotation;
-
-    // In game
-    public List<InGameData> questions;
 }

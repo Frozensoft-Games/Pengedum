@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,13 +17,16 @@ public class GameSaveManager : MonoBehaviour
     public GameObject player;
     public GameObject playerCamera;
 
+    public TMP_Text balanceText;
+
     public static bool hasPlayed;
 
     public static int balance;
 
     public static bool reload = false;
 
-    public List<InGameData> questions;
+    public static bool stopBalance;
+    private bool alreadySaved;
 
     public static int autoSaveTime = 10;
 
@@ -31,13 +35,27 @@ public class GameSaveManager : MonoBehaviour
         instance = this;
     }
 
-    public void ClosePc()
+    void FixedUpdate()
     {
-        OpenPCManager.instance.No();
+        if(hasPlayed && !alreadySaved)
+        {
+            alreadySaved = true;
+            Save();
+        }
+
+        if (!stopBalance)
+        {
+            balanceText.gameObject.SetActive(true);
+            balanceText.text = I18n.Fields["money"] + balance;
+        }
+        else balanceText.gameObject.SetActive(false);
     }
 
     async void Start()
     {
+        if (GameManager.instance == null)
+            SceneManager.LoadSceneAsync((int)SceneIndexes.MANAGER);
+
         if (SelectedProfileManager.selectedProfile is null)
         {
             Debug.Log("Failed to load game.");
@@ -72,7 +90,8 @@ public class GameSaveManager : MonoBehaviour
         balance = gameData.balance;
         hasPlayed = gameData.hasPlayed;
 
-        Debug.Log($"Balance: {balance} hasPlayed: {hasPlayed}");
+        if (hasPlayed)
+            InGameManager.instance.PlayAnimation();
 
         StartCoroutine(AutoSave());
     }

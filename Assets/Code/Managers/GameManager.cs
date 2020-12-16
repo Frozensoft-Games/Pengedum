@@ -101,6 +101,25 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(GetSceneLoadProgress());
     }
+
+    public void LoadCredits()
+    {
+        if (SceneManager.GetSceneByBuildIndex((int)SceneIndexes.CREDITS).isLoaded) return;
+        backgroundImage.sprite = backgrounds[Random.Range(0, backgrounds.Length)];
+        loadingScreen.gameObject.SetActive(true);
+
+        StartCoroutine(GenerateTips());
+
+        if(SceneManager.GetSceneByBuildIndex((int)SceneIndexes.TITLE_SCREEN).isLoaded)
+            scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.TITLE_SCREEN));
+        if (SceneManager.GetSceneByBuildIndex((int)SceneIndexes.MAP).isLoaded)
+            scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.MAP));
+
+        scenesLoading.Add(SceneManager.LoadSceneAsync((int)SceneIndexes.CREDITS, LoadSceneMode.Additive));
+
+        StartCoroutine(GetSceneLoadProgress());
+    }
+
     public void LoadProfiles()
     {
         if (SceneManager.GetSceneByBuildIndex((int)SceneIndexes.PROFILES).isLoaded) return;
@@ -131,6 +150,9 @@ public class GameManager : MonoBehaviour
 
         if(SceneManager.GetSceneByBuildIndex((int)SceneIndexes.PROFILES).isLoaded)
             scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.PROFILES));
+
+        if (SceneManager.GetSceneByBuildIndex((int)SceneIndexes.CREDITS).isLoaded)
+            scenesLoading.Add(SceneManager.UnloadSceneAsync((int)SceneIndexes.CREDITS));
 
         scenesLoading.Add(SceneManager.LoadSceneAsync((int)SceneIndexes.TITLE_SCREEN, LoadSceneMode.Additive));
 

@@ -22,4 +22,10 @@ public class PengedumManager : MonoBehaviour
     {
         GameManager.instance.LoadProfiles();
     }
+
+    // Credits
+    public void Credits()
+    {
+        GameManager.instance.LoadCredits();
+    }
 }
