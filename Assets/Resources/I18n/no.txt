@@ -31,3 +31,4 @@ endText=Hvorfor valgte du det? Tenk deg om trenger du virkelig dette? Er gamblin
 creditsText=Skaper: Eirik Sjøløkken (Eiromplays) kodet det meste av spillet. \n Og en spesiell takk til North Modding Company for at de lage og teksturerte modellene. \n Må jo ikke glemme google, google hjalp også.
 creditS=Credits:
 credits=Credits
+goodChoice=Bra Valg!

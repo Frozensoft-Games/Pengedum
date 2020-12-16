@@ -31,3 +31,4 @@ endText=Why did you choose that!? Think about it do you really need this? Is gam
 creditsText= Creator: Eirik Sjøløkken (Eiromplays) coded most of the game. \n And a Special thanks to North Modding Company for creating and texturing the models. \n Not to forget about google either, it was helpful.
 creditS=Credits:
 credits=Credits
+goodChoice=Good Choice!

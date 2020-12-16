@@ -19,13 +19,12 @@ public class GameSaveManager : MonoBehaviour
 
     public TMP_Text balanceText;
 
-    public static bool hasPlayed;
+    public static bool hasPlayed = false;
 
     public static int balance;
 
     public static bool reload = false;
-
-    public static bool stopBalance;
+    
     private bool alreadySaved;
 
     public static int autoSaveTime = 10;
@@ -37,18 +36,7 @@ public class GameSaveManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(hasPlayed && !alreadySaved)
-        {
-            alreadySaved = true;
-            Save();
-        }
-
-        if (!stopBalance)
-        {
-            balanceText.gameObject.SetActive(true);
-            balanceText.text = I18n.Fields["money"] + balance;
-        }
-        else balanceText.gameObject.SetActive(false);
+        balanceText.text = I18n.Fields["money"] + balance;
     }
 
     async void Start()

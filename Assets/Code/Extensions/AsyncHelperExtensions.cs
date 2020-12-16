@@ -12,22 +12,31 @@ namespace Assets.Code.Extensions
 {
     public class AsyncHelperExtensions : MonoBehaviour
     {
+        public static FileStream stream;
         // Helper method to write text to a file async
         public static async Task WriteTextAsync(string filePath, string text)
         {
             byte[] encodedText = Encoding.Unicode.GetBytes(text);
 
-            FileStream sourceStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true);
+            FileStream sourceStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
             await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
         }
 
         // Helper method to write bytes to a file async
         public static async Task WriteBytesAsync(string filePath, byte[] data)
         {
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
+            try
             {
-                await fileStream.WriteAsync(data, 0, data.Length);
-                fileStream.Close();
+                using (stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite,
+                    4096, true))
+                {
+                    await stream.WriteAsync(data, 0, data.Length);
+                    stream.Close();
+                }
+            }
+            catch (Exception exception)
+            {
+                Debug.Log($"Error when writing to file: {exception}");
             }
         }
 
@@ -55,14 +64,24 @@ namespace Assets.Code.Extensions
         // Helper method to read bytes from a file async
         public static async Task<byte[]> ReadBytesAsync(string filePath)
         {
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, true))
+            byte[] encodedData = {};
+            try
             {
-                var encodedData = new byte[fileStream.Length];
-                await fileStream.ReadAsync(encodedData, 0, (int)fileStream.Length);
-                fileStream.Close();
+                using (stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true))
+                {
+                    encodedData = new byte[stream.Length];
+                    await stream.ReadAsync(encodedData, 0, (int)stream.Length);
+                    stream.Close();
 
-                return encodedData;
+                    return encodedData;
+                }
             }
+            catch (Exception exception)
+            {
+                Debug.Log($"Error when writing to file: {exception}");
+            }
+
+            return encodedData;
         }
 
         // Helper method to load images async

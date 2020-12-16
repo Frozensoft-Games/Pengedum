@@ -9,10 +9,13 @@ public class OpenPCManager : MonoBehaviour
     public GameObject screenLight;
     public GameObject pcMenu;
 
+    public GameObject goodChoice;
+
     public static bool isOpen;
 
     void Start()
     {
+        isOpen = false;
         pcUi.SetActive(false);
         screenLight.SetActive(false);
     }
@@ -40,8 +43,8 @@ public class OpenPCManager : MonoBehaviour
 
     public void No()
     {
-        if(pcMenu.gameObject.activeInHierarchy)
-            Debug.Log("Good choice.");
+        if (pcMenu.gameObject.activeInHierarchy)
+            StartCoroutine(OpenGoodChoice());
 
         pcUi.SetActive(false);
         screenLight.SetActive(false);
@@ -53,5 +56,12 @@ public class OpenPCManager : MonoBehaviour
     public void PlayOnPc()
     {
         InGameManager.instance.PlayAnimation();
+    }
+
+    IEnumerator OpenGoodChoice()
+    {
+        goodChoice.SetActive(true);
+        yield return new WaitForSeconds(2);
+        goodChoice.SetActive(false);
     }
 }

@@ -121,9 +121,11 @@ public class OptionsManager : MonoBehaviour
 
     public async void LoadSettings()
     {
-        gameSettings =  await SaveManager.LoadOptionsAsync() ?? new GameSettings {volume = 1f,fullscreen = true, textureQuality = 0,resolutionIndex = 0, mouseSensitivity = MouseLook.mouseSensitivity, autoSave = GameSaveManager.autoSaveTime};
-        autoSaveField.text = gameSettings.autoSave.ToString(CultureInfo.CurrentCulture);
-        sensitivityField.text = gameSettings.mouseSensitivity.ToString(CultureInfo.CurrentCulture);
+        gameSettings = await SaveManager.LoadOptionsAsync() ?? new GameSettings { volume = 1f, fullscreen = true, textureQuality = 0, resolutionIndex = 0, mouseSensitivity = MouseLook.mouseSensitivity, autoSave = GameSaveManager.autoSaveTime };
+        autoSaveField.text = gameSettings.autoSave.ToString();
+        GameSaveManager.autoSaveTime = gameSettings.autoSave;
+        sensitivityField.text = gameSettings.mouseSensitivity.ToString();
+        MouseLook.mouseSensitivity = gameSettings.mouseSensitivity;
         volumeSlider.value = gameSettings.volume;
         antialiasingDropdown.value = gameSettings.antialiasing;
         vSyncDropdown.value = gameSettings.vSync;
@@ -131,6 +133,10 @@ public class OptionsManager : MonoBehaviour
         resolutionDropdown.value = gameSettings.resolutionIndex;
         fullscreenToggle.isOn = gameSettings.fullscreen;
         Screen.fullScreen = gameSettings.fullscreen;
+
+        if (gameSettings.mouseSensitivity == 0) gameSettings.mouseSensitivity = 500f; ApplyChanges();
+
+        if (gameSettings.autoSave <= 0) gameSettings.autoSave = 10; ApplyChanges();
     }
 
     public void ApplyChanges()

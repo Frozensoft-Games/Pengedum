@@ -13,6 +13,7 @@ public class DoorManager : MonoBehaviour
 
     void Start()
     {
+        isOpen = false;
         doorUI.SetActive(false);
     }
 

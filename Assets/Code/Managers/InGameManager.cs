@@ -13,6 +13,10 @@ public class InGameManager : MonoBehaviour
 
     public GameObject uI;
 
+    public GameObject moneyUi;
+
+    public GameObject closeBtn;
+
     void Awake()
     {
         instance = this;
@@ -20,16 +24,25 @@ public class InGameManager : MonoBehaviour
 
     public void PlayAnimation()
     {
-        GameSaveManager.stopBalance = true;
         GameSaveManager.hasPlayed = true;
         uI.SetActive(true);
+        moneyUi.SetActive(false);
+        GameSaveManager.instance.Save();
         StartCoroutine(Close());
+        StartCoroutine(ShowCloseBtn());
     }
 
     IEnumerator Close()
     {
         yield return new WaitForSeconds(15);
         CloseBtn();
+    }
+
+    IEnumerator ShowCloseBtn()
+    {
+        closeBtn.SetActive(false);
+        yield return new WaitForSeconds(5);
+        closeBtn.SetActive(true);
     }
 
     public void CloseBtn()
