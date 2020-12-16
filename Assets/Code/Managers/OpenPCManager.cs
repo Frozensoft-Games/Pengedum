@@ -5,10 +5,18 @@ using UnityEngine;
 
 public class OpenPCManager : MonoBehaviour
 {
+    public static OpenPCManager instance;
+
     public GameObject pcUi;
     public GameObject screenLight;
+    public GameObject pcMenu;
 
     public static bool isOpen = false;
+
+    void Awake()
+    {
+        instance = this;
+    }
 
     void Start()
     {
@@ -34,12 +42,14 @@ public class OpenPCManager : MonoBehaviour
     {
         pcUi.SetActive(false);
         screenLight.SetActive(true);
-        ScreenshotHandler.TakeScreenshot_Static(1920,1080);
+        pcMenu.SetActive(true);
     }
 
     public void No()
     {
         pcUi.SetActive(false);
+        screenLight.SetActive(false);
+        pcMenu.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         isOpen = false;
     }

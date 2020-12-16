@@ -1,5 +1,6 @@
 ﻿using Assets.Code.Saving___Loading.Profile_System.SelectProfile;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,6 +11,8 @@ public class GameSaveManager : MonoBehaviour
 
     public GameObject autoSave;
 
+    public GameObject pcMenu;
+
     public GameObject player;
     public GameObject playerCamera;
 
@@ -19,9 +22,18 @@ public class GameSaveManager : MonoBehaviour
 
     public static bool reload = false;
 
+    public List<InGameData> questions;
+
+    public static int autoSaveTime = 10;
+
     void Awake()
     {
         instance = this;
+    }
+
+    public void ClosePc()
+    {
+        OpenPCManager.instance.No();
     }
 
     async void Start()
@@ -62,7 +74,7 @@ public class GameSaveManager : MonoBehaviour
 
         Debug.Log($"Balance: {balance} hasPlayed: {hasPlayed}");
 
-        EnableAutoSave(10);
+        StartCoroutine(AutoSave());
     }
 
     public async void Save()
@@ -70,19 +82,14 @@ public class GameSaveManager : MonoBehaviour
         await SaveManager.SaveGameAsync(hasPlayed, balance, player.transform.position, player.transform.rotation, playerCamera.transform.position, playerCamera.transform.rotation);
     }
 
-    void EnableAutoSave(int time = 3)
-    {
-        StartCoroutine(AutoSave(time));
-    }
-
-    IEnumerator AutoSave(int time)
+    IEnumerator AutoSave()
     {
         while (!reload)
         {
-            yield return new WaitForSeconds(time);
+            yield return new WaitForSeconds(autoSaveTime);
             StartCoroutine(AutoSaveBox());
             Save();
-            ScreenshotHandler.TakeScreenshot_Static(225,225);
+            ScreenshotHandler.TakeScreenshot_Static(512, 512);
         }
     }
 

@@ -29,9 +29,9 @@ public class PauseMenu : MonoBehaviour
         pauseMenuUi.SetActive(false);
         Time.timeScale = 1f;
         gameIsPaused = false;
-        Debug.Log(DoorManager.isOpen + " " + OpenPCManager.isOpen);
-        if(!DoorManager.isOpen && !OpenPCManager.isOpen)
-            Cursor.lockState = CursorLockMode.Locked;
+        if (DoorManager.isOpen || OpenPCManager.isOpen)
+            Cursor.lockState = CursorLockMode.None;
+        else Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Pause()

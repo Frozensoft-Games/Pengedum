@@ -1,6 +1,7 @@
 play=Play
 options=Options
 quit=Quit
+close=Close
 back=Back
 doorMenuText=Are you sure you want to go back to the Main Menu?
 openPCText=Do you want to use this PC?
@@ -21,3 +22,7 @@ autoSave=Auto Save!
 fullscreen=Fullscreen
 graphics=Graphics
 resolution=Resolution
+playWin=Play today and get a chance to win 100000 Kr \n And end up like Tom here:
+sensitivity=Sensitivity:
+volume=Volume
+autoSaveTime=Auto Save:

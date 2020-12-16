@@ -5,6 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class PengedumManager : MonoBehaviour
 {
+    void Start()
+    {
+        if (GameManager.instance == null) 
+            SceneManager.LoadSceneAsync((int)SceneIndexes.MANAGER);
+    }
+
     // Quit the game
     public void Quit()
     {

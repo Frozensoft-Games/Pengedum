@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 // This class is used when saving one and one profile
@@ -17,4 +18,7 @@ public class GameData
     public Vector3 cameraPosition;
     // Camera Rotation
     public Quaternion cameraRotation;
+
+    // In game
+    public List<InGameData> questions;
 }

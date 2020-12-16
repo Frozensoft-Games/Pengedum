@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Assets.Code.Saving___Loading.Profile_System.SelectProfile;
 using TMPro;
@@ -17,6 +18,8 @@ public class OptionsManager : MonoBehaviour
     public TMP_Dropdown antialiasingDropdown;
     public TMP_Dropdown vSyncDropdown;
     public Slider volumeSlider;
+    public TMP_InputField sensitivityField;
+    public TMP_InputField autoSaveField;
 
     public Resolution[] resolutions;
     public string[] qualitySettings;
@@ -38,6 +41,8 @@ public class OptionsManager : MonoBehaviour
         antialiasingDropdown.onValueChanged.AddListener(delegate { OnAntialiasingChange(); });
         vSyncDropdown.onValueChanged.AddListener(delegate { OnVSyncChange(); });
         volumeSlider.onValueChanged.AddListener(delegate { OnVolumeChange(); });
+        sensitivityField.onValueChanged.AddListener(delegate { OnSensitivityChange();});
+        autoSaveField.onValueChanged.AddListener(delegate { OnAutoSaveChange();});
 
         // Add all resolutions to resolution Dropdown
         resolutions = Screen.resolutions;
@@ -68,6 +73,7 @@ public class OptionsManager : MonoBehaviour
     {
         Screen.SetResolution(resolutions[resolutionDropdown.value].width, resolutions[resolutionDropdown.value].height, Screen.fullScreenMode);
         gameSettings.resolutionIndex = resolutionDropdown.value;
+        SaveSettings();
     }
 
     public void OnTextureQualityChange()
@@ -79,6 +85,22 @@ public class OptionsManager : MonoBehaviour
     public void OnAntialiasingChange()
     {
         QualitySettings.antiAliasing = gameSettings.antialiasing = (int) Mathf.Pow(2f, antialiasingDropdown.value);
+    }
+
+    public void OnSensitivityChange()
+    {
+        if (!float.TryParse(sensitivityField.text, out float result)) return;
+        gameSettings.mouseSensitivity = result;
+        MouseLook.mouseSensitivity = result;
+        SaveSettings();
+    }
+
+    public void OnAutoSaveChange()
+    {
+        if (!int.TryParse(sensitivityField.text, out int result)) return;
+        gameSettings.autoSave = result;
+        GameSaveManager.autoSaveTime = result;
+        SaveSettings();
     }
 
     public void OnVSyncChange()
@@ -99,7 +121,9 @@ public class OptionsManager : MonoBehaviour
 
     public async void LoadSettings()
     {
-        gameSettings =  await SaveManager.LoadOptionsAsync() ?? new GameSettings {volume = 1f,fullscreen = true, textureQuality = 0,resolutionIndex = 0};
+        gameSettings =  await SaveManager.LoadOptionsAsync() ?? new GameSettings {volume = 1f,fullscreen = true, textureQuality = 0,resolutionIndex = 0, mouseSensitivity = MouseLook.mouseSensitivity, autoSave = GameSaveManager.autoSaveTime};
+        autoSaveField.text = gameSettings.autoSave.ToString(CultureInfo.CurrentCulture);
+        sensitivityField.text = gameSettings.mouseSensitivity.ToString(CultureInfo.CurrentCulture);
         volumeSlider.value = gameSettings.volume;
         antialiasingDropdown.value = gameSettings.antialiasing;
         vSyncDropdown.value = gameSettings.vSync;

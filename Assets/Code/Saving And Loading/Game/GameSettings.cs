@@ -22,4 +22,10 @@ public class GameSettings
 
     // Volume
     public float volume;
+
+    // Sensitivity
+    public float mouseSensitivity;
+
+    // Auto Save
+    public int autoSave;
 }
