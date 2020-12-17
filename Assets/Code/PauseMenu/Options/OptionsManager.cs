@@ -47,7 +47,7 @@ public class OptionsManager : MonoBehaviour
         // Add all resolutions to resolution Dropdown
         resolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
-        foreach (var resolution in resolutions.Reverse())
+        foreach (var resolution in resolutions)
         {
             resolutionDropdown.options.Add(new TMP_Dropdown.OptionData(resolution.ToString()));
         }
@@ -121,7 +121,7 @@ public class OptionsManager : MonoBehaviour
 
     public async void LoadSettings()
     {
-        gameSettings = await SaveManager.LoadOptionsAsync() ?? new GameSettings { volume = 1f, fullscreen = true, textureQuality = 0, resolutionIndex = 0, mouseSensitivity = MouseLook.mouseSensitivity, autoSave = GameSaveManager.autoSaveTime };
+        gameSettings = await SaveManager.LoadOptionsAsync() ?? new GameSettings { volume = 1f, fullscreen = true, textureQuality = 0, resolutionIndex = resolutions.Length-1, mouseSensitivity = MouseLook.mouseSensitivity, autoSave = GameSaveManager.autoSaveTime };
         autoSaveField.text = gameSettings.autoSave.ToString();
         GameSaveManager.autoSaveTime = gameSettings.autoSave;
         sensitivityField.text = gameSettings.mouseSensitivity.ToString();
