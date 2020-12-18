@@ -15,4 +15,9 @@ public class CreditsManager : MonoBehaviour
     {
         GameManager.instance.LoadMainMenu();
     }
+
+    public void GetHelp()
+    {
+        Application.OpenURL("https://hjelpelinjen.no/");
+    }
 }

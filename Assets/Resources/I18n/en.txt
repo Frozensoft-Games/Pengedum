@@ -32,3 +32,4 @@ creditsText= Creator: Eirik Sjøløkken (Eiromplays) coded most of the game. \n 
 creditS=Credits:
 credits=Credits
 goodChoice=Good Choice!
+getHelp=Get Help

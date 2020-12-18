@@ -32,3 +32,4 @@ creditsText=Skaper: Eirik Sjøløkken (Eiromplays) kodet det meste av spillet. \
 creditS=Credits:
 credits=Credits
 goodChoice=Bra Valg!
+getHelp=Få Hjelp
