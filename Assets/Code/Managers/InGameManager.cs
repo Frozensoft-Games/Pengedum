@@ -32,13 +32,13 @@ public class InGameManager : MonoBehaviour
         StartCoroutine(ShowCloseBtn());
     }
 
-    IEnumerator Close()
+    private IEnumerator Close()
     {
         yield return new WaitForSeconds(15);
         CloseBtn();
     }
 
-    IEnumerator ShowCloseBtn()
+    public IEnumerator ShowCloseBtn()
     {
         closeBtn.SetActive(false);
         yield return new WaitForSeconds(5);

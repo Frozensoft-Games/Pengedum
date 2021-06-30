@@ -21,7 +21,7 @@ namespace Assets.Code.Profile_System
         private string profilesPath = "";
 
         // Input fields used to create the profile
-        InputField profileName;
+        public InputField profileName;
 
         // Showing all profiles UI in the profiles scroll view
         public GameObject profilesUi;
@@ -320,7 +320,8 @@ namespace Assets.Code.Profile_System
             string profileConfigPath = Path.Combine(profilePath, "config.dat");
             string profileSettingsPath = Path.Combine(profilePath, "Settings.dat");
 
-            if (!Directory.Exists(mainDirectoryPath)) FileManagerExtension.CreateDirectory(mainDirectoryPath);
+            if (!Directory.Exists(mainDirectoryPath)) 
+                FileManagerExtension.CreateDirectory(mainDirectoryPath);
 
             FileManagerExtension.CreateDirectory(profileSavePath);
 
@@ -359,10 +360,8 @@ namespace Assets.Code.Profile_System
                 Debug.Log("You didn't change the profile name");
                 return;
             }
-            else
-            {
-                FileManagerExtension.MoveDirectory(Path.Combine(mainDirectoryPath, SelectedProfileManager.selectedProfile.fullProfileName), Path.Combine(mainDirectoryPath, fullProfileName));
-            }
+
+            FileManagerExtension.MoveDirectory(Path.Combine(mainDirectoryPath, SelectedProfileManager.selectedProfile.fullProfileName), Path.Combine(mainDirectoryPath, fullProfileName));
 
             // Sets the paths needed for the profile
             string profilePath = Path.Combine(mainDirectoryPath, fullProfileName);
